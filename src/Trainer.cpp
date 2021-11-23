@@ -101,7 +101,7 @@ void Trainer::removeCustomer(int id){
         capacity = capacity + 1; //if we remove customer we add 1 to the capacity.
     }
 
-}Customer* Trainer:: getCustomer(int id){
+}Customer* Trainer:: getCustomer(int id){//need to be fixed
     int returnCustomerIndex=0;
     bool isFound=false;
     for(int i=0;i<customersList.size()&&!isFound;i++){
@@ -124,9 +124,7 @@ bool Trainer::isOpen(){
 
 void Trainer::order(const int customer_id, const std::vector<int> workout_ids, const std::vector<Workout>& workout_options){
     for(int i=0;i<workout_ids.size();i++){
-
         orderList.push_back({customer_id,workout_options[workout_ids[i]]});
-        //cout<<workout_ids[i];
         cout<<getCustomer(customer_id)->getName()<<" Is Doing "<<workout_options[workout_ids[i]].getName()<<endl;//changed by ziv
         salary += workout_options[workout_ids[i]].getPrice();//add by ziv
     }
@@ -146,7 +144,6 @@ void Trainer::removeOrder(bool reduceSalary, int customerId) { //add by ziv
                 salary = salary - orderList[i].second.getPrice();
             }
         }
-        orderList.clear();//check if its clear good
         for (OrderPair order : tempOrderList) {
             orderList.push_back(order);
         }

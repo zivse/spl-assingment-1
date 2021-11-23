@@ -102,10 +102,10 @@ void MoveCustomer::act(Studio &studio) {
         } else {
             Customer &customerToMove = *srcTrainerObj.getCustomer(id);
             dstTrainerObj.addCustomer(&customerToMove);
-           // if (customerToMove.getIsOrder()) {
-                //srcTrainerObj.removeOrder(true, id);
-                //dstTrainerObj.order(id, customerToMove.order(studio.getWorkoutOptions()), studio.getWorkoutOptions());
-            //}
+            if (customerToMove.getIsOrder()) {
+                srcTrainerObj.removeOrder(true, id);
+                dstTrainerObj.order(id, customerToMove.order(studio.getWorkoutOptions()), studio.getWorkoutOptions());
+            }
             cout << "remove customer from src";
             srcTrainerObj.removeCustomer(id);
             complete();
