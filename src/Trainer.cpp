@@ -9,7 +9,6 @@ Trainer::~Trainer(){
         delete customer;
     }
     orderList.clear();
-
 };
 // Copy Constructor
 Trainer::Trainer(const Trainer & other){
@@ -144,9 +143,10 @@ void Trainer::removeOrder(bool reduceSalary, int customerId) { //add by ziv
                 salary = salary - orderList[i].second.getPrice();
             }
         }
-        for (OrderPair order : tempOrderList) {
-            orderList.push_back(order);
-        }
+
+    }
+    for (OrderPair order : tempOrderList) {
+        orderList.push_back(order);
     }
 }
 void Trainer::closeTrainer() {

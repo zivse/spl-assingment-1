@@ -37,7 +37,7 @@ Studio::Studio(const Studio& other):open(other.open){// add by ziv
     }
 }
 //Move Constructor
-Studio::Studio(Studio& other):open(other.open){
+Studio::Studio(Studio&& other):open(other.open){
     for(Trainer *trainer: other.trainers){
        trainers.push_back(trainer);
     }

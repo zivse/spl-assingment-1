@@ -19,7 +19,7 @@ public:
     std::vector<Workout>& getWorkoutOptions();
     std::vector<Trainer *> getTrainers();
     Studio(const Studio &other);//Copy Cunstractor
-    Studio(Studio &other);//Move Constructor
+    Studio(Studio &&other);//Move Constructor
     Studio& operator=(const Studio &other);//Copy Assignment
     Studio& operator=( Studio &&other);//Move Assignment
 
