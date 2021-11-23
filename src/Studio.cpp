@@ -39,7 +39,7 @@ Studio::Studio(const Studio& other):open(other.open){// add by ziv
 //Move Constructor
 Studio::Studio(Studio&& other):open(other.open){
     for(Trainer *trainer: other.trainers){
-       trainers.push_back(trainer);
+        trainers.push_back(trainer);
     }
     other.trainers.clear();
     for(BaseAction *action : other.actionsLog){
@@ -55,17 +55,21 @@ Studio::Studio(Studio&& other):open(other.open){
 Studio& Studio::operator=(const Studio &other){
     if(this != &other){
         open = other.open;
+        trainers.clear();
         for(Trainer *trainer: other.trainers){
             trainers.push_back(new Trainer(*trainer));
         }
+        actionsLog.clear();
         for(BaseAction *action : other.actionsLog){
             actionsLog.push_back(action ->clone());
         }
+        workout_options.clear();
         for(Workout workout: other.workout_options){
             workout_options.push_back(Workout(workout.getId(),workout.getName(), workout.getPrice(), workout.getType()));//check
         }
 
     }
+    return *this;
 
 }
 //Move Assignment
@@ -76,7 +80,7 @@ Studio& Studio::operator=(Studio &&other){
     }
     trainers.clear();
     for(Trainer *trainer: other.trainers){
-         trainers.push_back(trainer);
+        trainers.push_back(trainer);
     }
     other.trainers.clear();
 
@@ -92,13 +96,14 @@ Studio& Studio::operator=(Studio &&other){
         workout_options.push_back(other.workout_options[i]);
         other.workout_options.pop_back();
     }
+    return *this;
 }
 
 const vector<BaseAction*>&Studio::getActionsLog() const{
     return actionsLog;
 }
 Studio::Studio(const std::string &configFilePath) {
-    std::ifstream myfile("/Users/zivseker/CLionProjects/trial/example.txt");//check how to submit
+    std::ifstream myfile(configFilePath);
     int index = 0;
     std::string line;
     int numOfTrainers;
@@ -113,7 +118,7 @@ Studio::Studio(const std::string &configFilePath) {
                 counter = counter+1;
             }
             else if (counter == 1 && line[0]!='#') {
-                 numOfTrainers = std::stoi(line);
+                numOfTrainers = std::stoi(line);
             }
             else if(counter == 2 && line[0]!='#') {
                 int i = 0;
@@ -121,7 +126,7 @@ Studio::Studio(const std::string &configFilePath) {
                 std::istringstream ss(input);
                 std::string token;
                 while(std::getline(ss,token, ',')) {
-                      trainers.push_back(new Trainer(stoi(token)));
+                    trainers.push_back(new Trainer(stoi(token)));
                     i++;
                 }
             }
@@ -155,7 +160,7 @@ Studio::Studio(const std::string &configFilePath) {
             }
         }
         myfile.close();
-  }
+    }
 };
 int Studio::getNumOfTrainers() const {
     return trainers.size();
@@ -196,7 +201,7 @@ void Studio::start(){
             std::vector<Customer *> customersList;
             getline(ss, trainerIdString, ' ');
             trainerId = stoi(trainerIdString);
-            //int tempCustomerId=customerId;
+            int tempCustomerId=customerId;
             int capacity = trainers[trainerId]->getCapacity();
             while (getline(ss, customerName, ',') and capacity > 0) {
                 getline(ss, customerType, ' ');
@@ -219,9 +224,9 @@ void Studio::start(){
             action = new OpenTrainer(trainerId, customersList);
             action->inputAction = orders;
             action->act(*this);
-//            if(action->getStatus()==ERROR){//by ziv - why do it??????
-//                customerId=tempCustomerId; //if the update didnt work dont count the ids of the fail customers
-//            }
+            if(action->getStatus()==ERROR){//by ziv - why do it??????
+                customerId=tempCustomerId; //if the update didnt work dont count the ids of the fail customers
+            }
         } else if (command.compare("order") == 0) {
             getline(ss, trainerIdString, ' ');
             action = new Order(stoi(trainerIdString));
@@ -244,13 +249,13 @@ void Studio::start(){
 
         } else if (command.compare("workout_options") == 0) { //added by nir
             action = new PrintWorkoutOptions();
+            action->inputAction = orders;
             action->act(*this);
-
         } else if (command.compare("status") == 0) { //added by nir
             getline(ss, trainerIdString, ' '); //add by ziv
             action = new PrintTrainerStatus(stoi(trainerIdString));
+            action->inputAction = orders;
             action->act(*this);
-
         } else if (command.compare("close") == 0) {
             cout << "close" << endl;
             string trainerId;
@@ -269,7 +274,6 @@ void Studio::start(){
             action->inputAction = orders;
             action->act(*this);
         }
-
         actionsLog.push_back(action);
 //    } while (orders.compare("closeall") != 0);
     }while (open);
