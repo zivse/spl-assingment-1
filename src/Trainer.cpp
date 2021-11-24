@@ -2,7 +2,7 @@
 #include "Workout.h"
 #include "Trainer.h"
 using namespace std;
-Trainer::Trainer(int t_capacity):capacity (t_capacity){
+Trainer::Trainer(int t_capacity):capacity (t_capacity),open(false),customersList(),orderList(),salary(){
 };
 Trainer::~Trainer(){
     for(Customer *customer: customersList){
@@ -22,24 +22,25 @@ Trainer::Trainer(const Trainer & other){
     }
     orderList.clear();
     for(OrderPair order: other.orderList){
-        orderList.push_back({order.first, order.second});//check if pair like that
+        orderList.push_back(OrderPair(order.first, order.second));
     }
 }
+
 //move constructor
 Trainer::Trainer(Trainer&&other):capacity(other.getCapacity()),open(other.open),salary(other.salary){
     other.capacity=0;
     other.open=false;
     other.salary=0;
-    for(int i=0;i<other.customersList.size();i++){
+    customersList.clear();
+    for(int i=0;i<(int)other.customersList.size();i++){
         customersList.push_back(other.customersList[i]);
     }
     other.customersList.clear();
-    for(int i=0;i<other.orderList.size();i++){
+    orderList.clear();
+    for(int i=0;i<(int)other.orderList.size();i++){
         orderList.push_back(other.orderList[i]);
         other.orderList.pop_back();
     }
-
-
 }
 
 Trainer & Trainer::operator=(const Trainer &other) {
@@ -51,10 +52,11 @@ Trainer & Trainer::operator=(const Trainer &other) {
         customersList.clear();
         orderList.clear();
         //take the information from the other object and erase it.
-        for(int i=0;i<other.orderList.size();i++){
-            orderList.push_back({other.orderList[i].first,Workout(other.orderList[i].second.getId(),other.orderList[i].second.getName(),other.orderList[i].second.getPrice(),other.orderList[i].second.getType())});
+        for(int i=0;i<(int)other.orderList.size();i++){
+
+            orderList.push_back(OrderPair(other.orderList[i].first,Workout(other.orderList[i].second.getId(),other.orderList[i].second.getName(),other.orderList[i].second.getPrice(),other.orderList[i].second.getType())));
         }
-        for(int i=0;i<other.customersList.size();i++){
+        for(int i=0;i<(int)other.customersList.size();i++){
             customersList.push_back(other.customersList[i]->clone());
         }
     }
@@ -68,12 +70,14 @@ Trainer & Trainer::operator=(Trainer &&other) {
         other.capacity=0;
         other.open=false;
         other.salary=0;
-        for(int i=0;i<other.customersList.size();i++){
+        customersList.clear();
+        for(int i=0;i<(int)other.customersList.size();i++){
             customersList.push_back(other.customersList[i]);
         }
         other.customersList.clear();
-        for(int i=0;i<other.orderList.size();i++){
-            orderList.push_back({other.orderList[i].first,other.orderList[i].second});
+        orderList.clear();
+        for(int i=0;i<(int)other.orderList.size();i++){
+            orderList.push_back(OrderPair(other.orderList[i].first,other.orderList[i].second));
             other.orderList.pop_back();
         }
     }
@@ -92,12 +96,13 @@ void Trainer::addCustomer(Customer* customer) {
 }
 void Trainer::removeCustomer(int id){
     bool isIdFound=false;
-    for(int i=0;i<customersList.size()&&!isIdFound;i++){
-        if(customersList[i]->getId()==id){
+    for(int i=0;i<(int)customersList.size()&&!isIdFound;i++){
+        int currentId = customersList[i]->getId();
+        if(currentId==id){
             isIdFound=true;
-            Customer*a=customersList[i];
+            Customer* a=customersList[i];
             customersList.erase(customersList.begin()+i);
-            delete a;//need to be checked
+            delete a;
 
         }
     }
@@ -108,14 +113,16 @@ void Trainer::removeCustomer(int id){
 }Customer* Trainer:: getCustomer(int id){
     int returnCustomerIndex=0;
     bool isFound=false;
-    for(int i=0;i<customersList.size()&&!isFound;i++){
-        if(customersList[i]->getId()==id) {
+    for(int i=0;i<(int)customersList.size()&&!isFound;i++){
+        int customretId=customersList[i]->getId();
+        if(customretId==id) {
             returnCustomerIndex=i;
             isFound=true;
         }
     }
     if(isFound){
-        return customersList[returnCustomerIndex];}
+        return customersList[returnCustomerIndex];
+    }
     else{
         return nullptr;
     }
@@ -131,10 +138,8 @@ bool Trainer::isOpen(){
 }
 
 void Trainer::order(const int customer_id, const std::vector<int> workout_ids, const std::vector<Workout>& workout_options){
-    for(int i=0;i<workout_ids.size();i++){
-
-        orderList.push_back({customer_id,workout_options[workout_ids[i]]});
-        //cout<<workout_ids[i];
+    for(int i=0;i<(int)workout_ids.size();i++){
+        orderList.push_back(OrderPair(customer_id,workout_options[workout_ids[i]]));
         cout<<getCustomer(customer_id)->getName()<<" Is Doing "<<workout_options[workout_ids[i]].getName()<<endl;//changed by ziv
         salary += workout_options[workout_ids[i]].getPrice();//add by ziv
     }
@@ -145,7 +150,7 @@ void Trainer::openTrainer(){
 }
 void Trainer::removeOrder(bool reduceSalary, int customerId) { //add by ziv
     std::vector<OrderPair> tempOrderList;
-    for(int i=0; i<orderList.size(); i++) {
+    for(int i=0; i<(int)orderList.size(); i++) {
         if (orderList[i].first != customerId) {
             tempOrderList.push_back(orderList[i]);
         } else {
@@ -153,7 +158,6 @@ void Trainer::removeOrder(bool reduceSalary, int customerId) { //add by ziv
                 salary = salary - orderList[i].second.getPrice();
             }
             // delete &orderList[i];
-
         }
         orderList.pop_back();
     }

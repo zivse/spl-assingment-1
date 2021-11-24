@@ -6,7 +6,9 @@
 using namespace std;
 Customer::Customer(std::string c_name, int c_id):name(c_name),id(c_id),isOrder(false){
 }
+Customer::~Customer(){
 
+}
 std::string Customer:: getName() const{
     return name;
 }
@@ -19,10 +21,6 @@ bool Customer::getIsOrder() const{
 void Customer::setIsOrder() {
     isOrder = true;
 }
-
-Customer:: ~Customer(){
-
-}
 SweatyCustomer::SweatyCustomer(string _name, int _id):Customer(_name,_id)
 {
 
@@ -31,10 +29,12 @@ SweatyCustomer::~SweatyCustomer(){
 
 }
 vector<int> SweatyCustomer:: order(const std::vector<Workout> &workout_options) {
-    vector<int> orderActivities;
-    for (int i = 0; i < workout_options.size(); i++) {
-        if (workout_options[i].getType() == CARDIO) {
-            orderActivities.push_back(workout_options[i].getId());
+    vector<int> orderActivities={};
+    for (int i = 0; i < (int)workout_options.size(); i++) {
+        WorkoutType type=workout_options[i].getType();
+        if (type == CARDIO) {
+            int workoutId=workout_options[i].getId();
+            orderActivities.push_back(workoutId);
         }
     }
     return orderActivities;
@@ -59,16 +59,18 @@ CheapCustomer *CheapCustomer:: clone(){
 }
 
 vector<int> CheapCustomer:: order(const std::vector<Workout> &workout_options) {
-    vector<int> orderActivities;
+    vector<int> orderActivities={};
     int minTypeId=workout_options[0].getId();
     int minPrice=workout_options[0].getPrice();
-    for(int i=1;i<workout_options.size();i++){
-        if(workout_options[i].getPrice() == minPrice and workout_options[i].getId() < minTypeId ){
-            minTypeId = workout_options[i].getId();
+    for(int i=1;i<(int)workout_options.size();i++){
+        int priceCurrent=workout_options[i].getPrice();
+        int currentId=workout_options[i].getId();
+        if(priceCurrent == minPrice and currentId < minTypeId ){
+            minTypeId = currentId;
         }
-        if(workout_options[i].getPrice()<minPrice){
-            minPrice=workout_options[i].getPrice();
-            minTypeId=workout_options[i].getId();
+        if(priceCurrent<minPrice){
+            minPrice=priceCurrent;
+            minTypeId=currentId;
         }
     }
     orderActivities.push_back(minTypeId);
@@ -84,18 +86,23 @@ HeavyMuscleCustomer::HeavyMuscleCustomer(string _name, int _id):Customer(_name,_
 HeavyMuscleCustomer::~HeavyMuscleCustomer(){
 }
 vector<int> HeavyMuscleCustomer:: order(const std::vector<Workout> &workout_options) {
-    vector<int> orderActivities;
-    std::vector<int> prices;
-    for(int i=0; i<workout_options.size(); i++){
-        if(workout_options[i].getType() == ANAEROBIC){
-            prices.push_back(workout_options[i].getPrice());
+    vector<int> orderActivities={};
+    std::vector<int> prices={};
+    for(int i=0; i<(int)workout_options.size(); i++){
+        WorkoutType type=workout_options[i].getType();
+        if( type== ANAEROBIC){
+            int price=workout_options[i].getPrice();
+            prices.push_back(price);
         }
     }
     std::sort(prices.begin(), prices.end());//add by ziv
     for(int price:prices) {
         for (Workout workout: workout_options) {
-            if (workout.getType() == ANAEROBIC and workout.getPrice() == price) {
-                orderActivities.push_back(workout.getId());
+            WorkoutType type=workout.getType();
+            int currentVecPrice=workout.getPrice();
+            if (type == ANAEROBIC and currentVecPrice == price) {
+                int workoutId=workout.getId();
+                orderActivities.push_back(workoutId);
                 break;
             }
         }
@@ -119,22 +126,25 @@ FullBodyCustomer::~FullBodyCustomer(){
 }
 
 vector<int> FullBodyCustomer:: order(const std::vector<Workout> &workout_options) {
-    vector<int> orderActivities;
+    vector<int> orderActivities={};
     bool isFound = false;
-    int lowCrdPrice, lowCrdPriceId, highPrice, highPriceId, lowAnePrice, lowAnePriceId;
-    for (int i = 0; i < workout_options.size(); i++) {//find the most expansive anaerobic
-        if (workout_options[i].getType() == CARDIO) {
+    int lowCrdPrice=0, lowCrdPriceId=0, highPrice=0, highPriceId=0, lowAnePrice=0, lowAnePriceId=0;
+    for (int i = 0; i < (int)workout_options.size(); i++) {//find the most expansive anaerobic
+        int currentPrice=workout_options[i].getPrice();
+        int workoutId=workout_options[i].getId();
+        WorkoutType type=workout_options[i].getType();
+        if (type == CARDIO) {
             if(not isFound){
                 lowCrdPrice = workout_options[i].getPrice();
                 lowCrdPriceId = workout_options[i].getId();
                 isFound = true;
             }
-            if(workout_options[i].getPrice() == lowCrdPrice and workout_options[i].getId() < lowCrdPriceId){
+            if( currentPrice== lowCrdPrice and workoutId < lowCrdPriceId){
                 lowCrdPriceId = workout_options[i].getId();
             }
-            if(workout_options[i].getPrice() < lowCrdPrice){
-                lowCrdPrice = workout_options[i].getPrice();
-                lowCrdPriceId = workout_options[i].getId();
+            if(currentPrice < lowCrdPrice){
+                lowCrdPrice = currentPrice;
+                lowCrdPriceId = workoutId;
             }
         }
 
@@ -142,19 +152,23 @@ vector<int> FullBodyCustomer:: order(const std::vector<Workout> &workout_options
     }
     orderActivities.push_back(lowCrdPriceId);
     isFound = false;
-    for(int i =0; i < workout_options.size(); i++){// need to be finish
-        if (workout_options[i].getType() == MIXED) {
+    for(int i =0; i < (int)workout_options.size(); i++){
+        WorkoutType type=workout_options[i].getType();
+        int price=workout_options[i].getPrice();
+        int WorkoutId=workout_options[i].getId();
+        if (type == MIXED) {
             if(not isFound){
-                highPrice = workout_options[i].getPrice();
-                highPriceId = workout_options[i].getId();
+                highPrice =price;
+                highPriceId = WorkoutId;
                 isFound = true;
             }
-            if(workout_options[i].getPrice() == highPrice and workout_options[i].getId() < highPriceId) {
-                lowCrdPriceId = workout_options[i].getId();
+
+            if(price == highPrice and WorkoutId < highPriceId) {
+                lowCrdPriceId = WorkoutId;
             }
-            if(workout_options[i].getPrice() >  highPrice){
-                highPrice = workout_options[i].getPrice();
-                highPriceId = workout_options[i].getId();
+            if(price >  highPrice){
+                highPrice =price;
+                highPriceId =WorkoutId;
             }
         }
 
@@ -162,18 +176,21 @@ vector<int> FullBodyCustomer:: order(const std::vector<Workout> &workout_options
     isFound = false; //add by ziv
     orderActivities.push_back(highPriceId);
     for (int i = 0; i < workout_options.size(); i++) {//find the most expansive anaerobic
-        if (workout_options[i].getType() == ANAEROBIC) {
+        WorkoutType type=workout_options[i].getType();
+        int price=workout_options[i].getPrice();
+        int workOutId=workout_options[i].getId();
+        if (type == ANAEROBIC) {
             if(not isFound){
-                lowAnePrice = workout_options[i].getPrice();
-                lowAnePriceId = workout_options[i].getId();
+                lowAnePrice = price;
+                lowAnePriceId = workOutId;
                 isFound = true;
             }
-            if(workout_options[i].getPrice() == lowAnePrice and workout_options[i].getId() < lowAnePriceId) {
-                lowAnePriceId = workout_options[i].getId();
+            if(price == lowAnePrice and workOutId < lowAnePriceId) {
+                lowAnePriceId = workOutId;
             }
-            if(workout_options[i].getPrice() < lowAnePrice){
-                lowAnePrice = workout_options[i].getPrice();
-                lowAnePriceId = workout_options[i].getId();
+            if(price < lowAnePrice){
+                lowAnePrice = price;
+                lowAnePriceId = workOutId;
             }
         }
     }

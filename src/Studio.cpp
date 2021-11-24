@@ -103,7 +103,7 @@ const vector<BaseAction*>&Studio::getActionsLog() const{
     return actionsLog;
 }
 Studio::Studio(const std::string &configFilePath) {
-    std::ifstream myfile(configFilePath);
+    std::ifstream myfile(configFilePath);//check how to submit
     int index = 0;
     std::string line;
     int numOfTrainers;
@@ -224,7 +224,7 @@ void Studio::start(){
             action = new OpenTrainer(trainerId, customersList);
             action->inputAction = orders;
             action->act(*this);
-            if(action->getStatus()==ERROR){//by ziv - why do it??????
+            if(action->getStatus()==ERROR){
                 customerId=tempCustomerId; //if the update didnt work dont count the ids of the fail customers
             }
         } else if (command.compare("order") == 0) {
