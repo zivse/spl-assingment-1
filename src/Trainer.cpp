@@ -16,11 +16,11 @@ Trainer::Trainer(const Trainer & other){
     capacity = other.capacity;
     open = other.open;
     salary = other.salary;
-    customersList.clear();
+    //customersList.clear();
     for(Customer *customer: other.customersList){
         customersList.push_back(customer->clone());
     }
-    orderList.clear();
+    //orderList.clear();
     for(OrderPair order: other.orderList){
         orderList.push_back(OrderPair(order.first, order.second));
     }
