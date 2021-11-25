@@ -94,6 +94,7 @@ void Trainer::addCustomer(Customer* customer) {
     customersList.push_back(customer);
     capacity--;
 }
+
 void Trainer::removeCustomer(int id){
     bool isIdFound=false;
     for(int i=0;i<(int)customersList.size()&&!isIdFound;i++){
@@ -103,7 +104,6 @@ void Trainer::removeCustomer(int id){
             Customer* a=customersList[i];
             customersList.erase(customersList.begin()+i);
             delete a;
-
         }
     }
     if(isIdFound){
@@ -164,7 +164,6 @@ void Trainer::removeOrder(bool reduceSalary, int customerId) { //add by ziv
     for (OrderPair order : tempOrderList) {
         orderList.push_back(order);
     }
-
 }
 void Trainer::closeTrainer() {
     for(Customer *customer: customersList){

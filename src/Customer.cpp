@@ -1,5 +1,4 @@
 #include "Customer.h"
-#include <iostream>
 #include <algorithm>
 #include "Workout.h"
 #include <functional>
@@ -86,29 +85,39 @@ HeavyMuscleCustomer::HeavyMuscleCustomer(string _name, int _id):Customer(_name,_
 HeavyMuscleCustomer::~HeavyMuscleCustomer(){
 }
 vector<int> HeavyMuscleCustomer:: order(const std::vector<Workout> &workout_options) {
-    vector<int> orderActivities={};
+    //vector<int> orderActivities={};
     std::vector<int> prices={};
-    for(int i=0; i<(int)workout_options.size(); i++){
-        WorkoutType type=workout_options[i].getType();
+    for(Workout workout:workout_options){
+        WorkoutType type=workout.getType();
         if( type== ANAEROBIC){
-            int price=workout_options[i].getPrice();
+            int price=workout.getPrice();
             prices.push_back(price);
         }
     }
     std::sort(prices.begin(), prices.end());//add by ziv
+    std::vector<int> anerobicIds = {};
     for(int price:prices) {
         for (Workout workout: workout_options) {
             WorkoutType type=workout.getType();
             int currentVecPrice=workout.getPrice();
             if (type == ANAEROBIC and currentVecPrice == price) {
-                int workoutId=workout.getId();
-                orderActivities.push_back(workoutId);
-                break;
+                bool isExist = false;
+                for(int id:anerobicIds){
+                    int workoutId=workout.getId();
+                    if(workoutId == id){
+                        isExist = true;
+                        break;
+                    }
+                    if(not isExist){
+                        anerobicIds.push_back(workoutId);
+                        break;
+                    }
+                }
             }
         }
     }
-    std::reverse(orderActivities.begin(), orderActivities.end());
-    return  orderActivities;
+    std::reverse(anerobicIds.begin(), anerobicIds.end());
+    return anerobicIds;
 };
 
 std::string HeavyMuscleCustomer:: toString()const

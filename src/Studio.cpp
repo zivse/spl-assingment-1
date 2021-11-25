@@ -53,21 +53,35 @@ Studio::Studio(Studio&& other):open(other.open){
 }
 // Copy Assignment
 Studio& Studio::operator=(const Studio &other){
-    if(this != &other){
-        open = other.open;
+    if(this == &other)
+    {
+        return *this;
+    }
+    else
+    {
+        for(Trainer* trainer:trainers)
+        {
+            delete trainer;
+        }
         trainers.clear();
-        for(Trainer *trainer: other.trainers){
+        for(Trainer *trainer: other.trainers)
+        {
             trainers.push_back(new Trainer(*trainer));
         }
+        for(BaseAction* action:actionsLog)
+        {
+            delete action;
+        }
         actionsLog.clear();
-        for(BaseAction *action : other.actionsLog){
+        for(BaseAction *action : other.actionsLog)
+        {
             actionsLog.push_back(action ->clone());
         }
         workout_options.clear();
-        for(Workout workout: other.workout_options){
+        for(Workout workout: other.workout_options)
+        {
             workout_options.push_back(Workout(workout.getId(),workout.getName(), workout.getPrice(), workout.getType()));//check
         }
-
     }
     return *this;
 
@@ -103,7 +117,7 @@ const vector<BaseAction*>&Studio::getActionsLog() const{
     return actionsLog;
 }
 Studio::Studio(const std::string &configFilePath) {
-    std::ifstream myfile(configFilePath);//check how to submit
+    std::ifstream myfile(configFilePath);
     int index = 0;
     std::string line;
     int numOfTrainers;
