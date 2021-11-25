@@ -29,9 +29,9 @@ void BaseAction::complete(){
 OpenTrainer::OpenTrainer(int id, std::vector<Customer *> &customersList):trainerId(id),customers(customersList){
 }
 OpenTrainer::~OpenTrainer(){
-    for(Customer* customer: customers){
-        delete customer;
-    }
+//    for(Customer* customer: customers){
+//        delete customer;
+//    }
     customers.clear();
 
 }
@@ -104,7 +104,6 @@ MoveCustomer::MoveCustomer(int src, int dst, int customerId):srcTrainer(src),dst
 {
 };
 MoveCustomer::~MoveCustomer(){
-
 }
 
 void MoveCustomer::act(Studio &studio) {
@@ -113,23 +112,23 @@ void MoveCustomer::act(Studio &studio) {
         dstTrainer < 0) {
         error("Cannot move customer");
     } else {
-        Trainer &srcTrainerObj = *studio.getTrainer(srcTrainer);
-        Trainer &dstTrainerObj = *studio.getTrainer(dstTrainer);
-        int capacityCurrent = dstTrainerObj.getCapacity();
-        if (capacityCurrent== 0 or srcTrainerObj.getCustomer(id) == nullptr or
-            not(srcTrainerObj.isOpen()) or not(dstTrainerObj.isOpen())) {
+        Trainer *srcTrainerObj = studio.getTrainer(srcTrainer);
+        Trainer *dstTrainerObj = studio.getTrainer(dstTrainer);
+        int capacityCurrent = dstTrainerObj->getCapacity();
+        if (capacityCurrent== 0 or srcTrainerObj->getCustomer(id) == nullptr or
+            not(srcTrainerObj->isOpen()) or not(dstTrainerObj->isOpen())) {
             error("Cannot move customer");
         } else {
-            Customer &customerToMove = *srcTrainerObj.getCustomer(id);
-            dstTrainerObj.addCustomer(&customerToMove);
-            if (customerToMove.getIsOrder()) {
-                srcTrainerObj.removeOrder(true, id);
-                dstTrainerObj.order(id, customerToMove.order(studio.getWorkoutOptions()), studio.getWorkoutOptions());
+            Customer* customerToMove = srcTrainerObj->getCustomer(id);
+            dstTrainerObj->addCustomer(customerToMove);
+            if (customerToMove->getIsOrder()) {
+                srcTrainerObj->removeOrder(true, id);
+                dstTrainerObj->order(id, customerToMove->order(studio.getWorkoutOptions()), studio.getWorkoutOptions());
             }
-            srcTrainerObj.removeCustomer(id);
+            srcTrainerObj->removeCustomer(id);
             complete();
-            if (srcTrainerObj.getCustomers().empty()) {
-                srcTrainerObj.closeTrainer();
+            if (srcTrainerObj->getCustomers().empty()) {
+                srcTrainerObj->closeTrainer();
             }
             complete();
         }

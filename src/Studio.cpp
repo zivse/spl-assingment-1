@@ -12,20 +12,9 @@ extern Studio* backup;
 Studio::Studio(){
 
 }
-Studio::~Studio(){
-    for(Trainer *trainer: trainers){
-        delete trainer;
-    }
-    trainers.clear();//check if necessary
-    for(BaseAction *action: actionsLog){
-        delete action;
-    }
-    actionsLog.clear();//check if necessary
 
-    workout_options.clear();
-}
 //Copy Constructor
-Studio::Studio(const Studio& other):open(other.open){// add by ziv
+Studio::Studio(const Studio& other):open(other.open), trainers(), actionsLog(), workout_options(){// add by ziv
     for(Trainer *trainer: other.trainers){
         trainers.push_back(new Trainer(*trainer));
     }
@@ -37,7 +26,7 @@ Studio::Studio(const Studio& other):open(other.open){// add by ziv
     }
 }
 //Move Constructor
-Studio::Studio(Studio&& other):open(other.open){
+Studio::Studio(Studio&& other):open(other.open), trainers(), actionsLog(), workout_options(){
     for(Trainer *trainer: other.trainers){
         trainers.push_back(trainer);
     }
@@ -84,7 +73,6 @@ Studio& Studio::operator=(const Studio &other){
         }
     }
     return *this;
-
 }
 //Move Assignment
 Studio& Studio::operator=(Studio &&other){
@@ -96,7 +84,7 @@ Studio& Studio::operator=(Studio &&other){
     for(Trainer *trainer: other.trainers){
         trainers.push_back(trainer);
     }
-    other.trainers.clear();
+    //other.trainers.clear();
 
     for(int i=0; i<actionsLog.size(); i++){
         delete actionsLog[i];
@@ -105,12 +93,24 @@ Studio& Studio::operator=(Studio &&other){
     for(BaseAction *action : other.actionsLog){
         actionsLog.push_back(action);
     }
-    workout_options.clear();
+    //workout_options.clear();
     for(int i=0; i<other.workout_options.size(); i++){
         workout_options.push_back(other.workout_options[i]);
-        other.workout_options.pop_back();
+        //other.workout_options.pop_back();
     }
     return *this;
+}
+
+Studio::~Studio(){
+    for(Trainer *trainer: trainers){
+        delete trainer;
+    }
+    trainers.clear();//check if necessary
+    for(BaseAction *action: actionsLog){
+        delete action;
+    }
+    actionsLog.clear();//check if necessary
+    //workout_options.clear();
 }
 
 const vector<BaseAction*>&Studio::getActionsLog() const{

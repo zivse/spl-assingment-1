@@ -15,7 +15,7 @@ public:
     std::string getName() const;
     int getId() const;
     virtual ~Customer(); //destructor
-    virtual Customer* clone() = 0;
+    virtual Customer* clone()=0;
     bool getIsOrder() const;//by ziv
     void setIsOrder();//by ziv
     bool getIsRemoved() const;

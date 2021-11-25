@@ -8,17 +8,13 @@ Trainer::~Trainer(){
     for(Customer *customer: customersList){
         delete customer;
     }
+    customersList.clear();
     orderList.clear();
-
 };
 // Copy Constructor
-Trainer::Trainer(const Trainer & other){
-    capacity = other.capacity;
-    open = other.open;
-    salary = other.salary;
-    //customersList.clear();
+Trainer::Trainer(const Trainer & other): capacity(other.capacity), open(other.open), salary(other.salary), customersList(), orderList(){
     for(Customer *customer: other.customersList){
-        customersList.push_back(customer->clone());
+        customersList.push_back(customer->clone());//(customer->clone());
     }
     orderList.clear();
 //    for(OrderPair order: other.orderList){
@@ -28,15 +24,14 @@ Trainer::Trainer(const Trainer & other){
 }
 
 //move constructor
-Trainer::Trainer(Trainer&&other):capacity(other.getCapacity()),open(other.open),salary(other.salary){
-    other.capacity=0;
-    other.open=false;
-    other.salary=0;
-    customersList.clear();
+Trainer::Trainer(Trainer&&other):capacity(other.getCapacity()),open(other.open),salary(other.salary), customersList(), orderList(){
+    //other.capacity=0;
+    //other.open=false;
+    //other.salary=0;
     for(int i=0;i<(int)other.customersList.size();i++){
         customersList.push_back(other.customersList[i]);
     }
-    other.customersList.clear();
+    //other.customersList.clear();
     orderList.clear();
     orderList = std::vector<OrderPair>(other.orderList);
 //    for(int i=0;i<(int)other.orderList.size();i++){
@@ -51,12 +46,15 @@ Trainer & Trainer::operator=(const Trainer &other) {
         open=other.open;
         salary=other.salary;
         //clear my object
+        for (Customer *customer: customersList)
+        {
+            delete customer;
+        }
         customersList.clear();
         orderList.clear();
         //take the information from the other object and erase it.
         orderList = std::vector<OrderPair>(other.orderList);
 //        for(int i=0;i<(int)other.orderList.size();i++){
-//
 //            orderList.push_back(OrderPair(other.orderList[i].first,Workout(other.orderList[i].second.getId(),other.orderList[i].second.getName(),other.orderList[i].second.getPrice(),other.orderList[i].second.getType())));
 //        }
         for(int i=0;i<(int)other.customersList.size();i++){
@@ -70,14 +68,17 @@ Trainer & Trainer::operator=(Trainer &&other) {
         capacity=other.capacity;
         open=other.open;
         salary=other.salary;
-        other.capacity=0;
-        other.open=false;
-        other.salary=0;
+        //other.capacity=0;
+        //other.open=false;
+        //other.salary=0;
+        for (Customer *customer: customersList){
+            delete customer;
+        }
         customersList.clear();
         for(int i=0;i<(int)other.customersList.size();i++){
             customersList.push_back(other.customersList[i]);
         }
-        other.customersList.clear();
+        //other.customersList.clear();
         orderList.clear();
         orderList = std::vector<OrderPair>(other.orderList);
 //        for(int i=0;i<(int)other.orderList.size();i++){
