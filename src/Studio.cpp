@@ -32,7 +32,7 @@ Studio::Studio(const Studio& other):open(other.open){// add by ziv
     for(BaseAction *action : other.actionsLog){
         actionsLog.push_back(action ->clone());
     }
-    for(Workout workout: workout_options){
+    for(Workout workout: other.workout_options){
         workout_options.push_back(Workout(workout.getId(),workout.getName(), workout.getPrice(), workout.getType()));
     }
 }

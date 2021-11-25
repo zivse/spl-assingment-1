@@ -101,20 +101,22 @@ vector<int> HeavyMuscleCustomer:: order(const std::vector<Workout> &workout_opti
             WorkoutType type=workout.getType();
             int currentVecPrice=workout.getPrice();
             if (type == ANAEROBIC and currentVecPrice == price) {
+                int workoutId=workout.getId();
                 bool isExist = false;
                 for(int id:anerobicIds){
-                    int workoutId=workout.getId();
                     if(workoutId == id){
                         isExist = true;
                         break;
                     }
-                    if(not isExist){
-                        anerobicIds.push_back(workoutId);
-                        break;
-                    }
+                }
+                if(not isExist){
+                    anerobicIds.push_back(workoutId);
+                    break;
                 }
             }
+
         }
+
     }
     std::reverse(anerobicIds.begin(), anerobicIds.end());
     return anerobicIds;

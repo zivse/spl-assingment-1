@@ -28,6 +28,7 @@ private:
     std::vector<Trainer*> trainers;
     std::vector<Workout> workout_options;
     std::vector<BaseAction*> actionsLog;
+
 };
 
 #endif
