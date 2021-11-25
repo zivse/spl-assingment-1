@@ -96,6 +96,7 @@ int Trainer::getSalary() {
     return salary;
 }
 void Trainer::addCustomer(Customer* customer) {
+    cout<<"customer id in add customer in trainer: "<<customer->getId();
     customersList.push_back(customer);
     capacity--;
 }
@@ -172,8 +173,11 @@ void Trainer::removeOrder(bool reduceSalary, int customerId) { //add by ziv
 }
 void Trainer::closeTrainer() {
     for(Customer *customer: customersList){
-        removeOrder(false, customer->getId());
-        removeCustomer(customer->getId());
+        cout<<"this is so dumb ";
+        int cid = customer->getId();
+        cout<<cid<<endl;
+        removeCustomer(customersList[0]->getId());
+        removeOrder(false, cid);
     }
     open = false;
 }

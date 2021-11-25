@@ -9,12 +9,12 @@
 #include "Customer.h"
 using namespace std;
 extern Studio* backup;
-Studio::Studio(){
+Studio::Studio():open(false),trainers(),actionsLog(),workout_options(),customerId(0){
 
 }
 
 //Copy Constructor
-Studio::Studio(const Studio& other):open(other.open), trainers(), actionsLog(), workout_options(){// add by ziv
+Studio::Studio(const Studio& other):open(other.open), trainers(), actionsLog(), workout_options(), customerId(other.customerId){// add by ziv
     for(Trainer *trainer: other.trainers){
         trainers.push_back(new Trainer(*trainer));
     }
@@ -26,7 +26,7 @@ Studio::Studio(const Studio& other):open(other.open), trainers(), actionsLog(), 
     }
 }
 //Move Constructor
-Studio::Studio(Studio&& other):open(other.open), trainers(), actionsLog(), workout_options(){
+Studio::Studio(Studio&& other):open(other.open), trainers(), actionsLog(), workout_options(), customerId(other.customerId){
     for(Trainer *trainer: other.trainers){
         trainers.push_back(trainer);
     }
@@ -116,7 +116,7 @@ Studio::~Studio(){
 const vector<BaseAction*>&Studio::getActionsLog() const{
     return actionsLog;
 }
-Studio::Studio(const std::string &configFilePath) {
+Studio::Studio(const std::string &configFilePath):open(true),customerId(0),actionsLog(),workout_options(),trainers() {
     std::ifstream myfile(configFilePath);
     int index = 0;
     std::string line;
@@ -191,7 +191,6 @@ vector<Trainer *> Studio::getTrainers() {
 void Studio::start(){
     cout << "Studio is now open!" << endl;
     open = true;
-    int customerId = 0; //save the sirial customer id
     string orders; //inpus from user
     string command; //value that contain the command from the input. for example: open/order..
     string customerName;
@@ -215,8 +214,8 @@ void Studio::start(){
             std::vector<Customer *> customersList;
             getline(ss, trainerIdString, ' ');
             trainerId = stoi(trainerIdString);
-            int tempCustomerId=customerId;
             int capacity = trainers[trainerId]->getCapacity();
+            //int tempCustomerId = customerId;
             while (getline(ss, customerName, ',') and capacity > 0) {
                 getline(ss, customerType, ' ');
                 if (customerType == "swt") {
@@ -228,9 +227,12 @@ void Studio::start(){
                 } else if (customerType == "mcl") {
                     HeavyMuscleCustomer *newMclCustomer = new HeavyMuscleCustomer(customerName, customerId);
                     customersList.push_back(newMclCustomer);
-                } else {       // (customerType == "fbd")
+                } else if (customerType == "fbd"){       // (customerType == "fbd")
                     FullBodyCustomer *newFbdCustomer = new FullBodyCustomer(customerName, customerId);
                     customersList.push_back(newFbdCustomer);
+                }
+                else {
+                    cout<<"testing"<<endl;
                 }
                 capacity--;
                 customerId++;
@@ -238,9 +240,9 @@ void Studio::start(){
             action = new OpenTrainer(trainerId, customersList);
             action->inputAction = orders;
             action->act(*this);
-            if(action->getStatus()==ERROR){
-                customerId=tempCustomerId; //if the update didnt work dont count the ids of the fail customers
-            }
+//            if(action->getStatus()==ERROR){
+//                customerId=tempCustomerId; //if the update didnt work dont count the ids of the fail customers
+//            }
         } else if (command.compare("order") == 0) {
             getline(ss, trainerIdString, ' ');
             action = new Order(stoi(trainerIdString));

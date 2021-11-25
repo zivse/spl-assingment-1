@@ -119,7 +119,7 @@ void MoveCustomer::act(Studio &studio) {
             not(srcTrainerObj->isOpen()) or not(dstTrainerObj->isOpen())) {
             error("Cannot move customer");
         } else {
-            Customer* customerToMove = srcTrainerObj->getCustomer(id);
+            Customer* customerToMove = srcTrainerObj->getCustomer(id)->clone();
             dstTrainerObj->addCustomer(customerToMove);
             if (customerToMove->getIsOrder()) {
                 srcTrainerObj->removeOrder(true, id);
@@ -156,13 +156,9 @@ Close::~Close(){
 
 }
 void Close::act(Studio &studio) {//check if it works
-    Trainer &trainerToClose = *studio.getTrainer(trainerId);
-    trainerToClose.closeTrainer();
-    //trainerToClose.removeOrder(false, trainerId);
-    cout << "Trainer " << trainerId << " closed." << " Salary " << trainerToClose.getSalary() << "NIS" << endl;
-    for (int i = 0; i < (int)trainerToClose.getCustomers().size(); i++) {
-        trainerToClose.removeCustomer(trainerToClose.getCustomers()[i]->getId());
-    }
+    Trainer* trainerToClose = studio.getTrainer(trainerId);
+    cout << "Trainer " << trainerId << " closed." << " Salary " << trainerToClose->getSalary() << "NIS" << endl;
+    trainerToClose->closeTrainer();
     complete();
 }
 std::string Close::toString() const {
@@ -186,6 +182,7 @@ CloseAll::~CloseAll(){
 void CloseAll::act(Studio &studio) {//need to be fixed
     for (int i = 0; i < (int)studio.getTrainers().size(); i++) {
         Close close = Close(i);
+        close.act(studio);
     }
 }
 std::string CloseAll::toString() const {
@@ -261,11 +258,11 @@ PrintTrainerStatus::~PrintTrainerStatus(){
 }
 
 void PrintTrainerStatus::act(Studio &studio){//added by nir
-    Trainer &tempTrainer = *studio.getTrainer(trainerId);
-    std::vector<Customer *> &tempCustomersList=studio.getTrainer(trainerId)->getCustomers();
-    std::vector<OrderPair> &tempOrdersList=studio.getTrainer(trainerId)->getOrders();
+    Trainer *tempTrainer = studio.getTrainer(trainerId);
+    std::vector<Customer *> tempCustomersList=studio.getTrainer(trainerId)->getCustomers();
+    std::vector<OrderPair> tempOrdersList=studio.getTrainer(trainerId)->getOrders();
     string status;
-    if(tempTrainer.isOpen()){
+    if(tempTrainer->isOpen()){
         cout<<"Trainer "<<trainerId<<" status: "<<"open"<<endl;
         cout<<"customers:"<<endl;
         for(int i=0;i<(int)tempCustomersList.size();i++){

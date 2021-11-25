@@ -1,4 +1,4 @@
-#include "Studio.h"
+#include "../include/Studio.h"
 #include <iostream>
 #include "Trainer.h"
 using namespace std;
