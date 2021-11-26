@@ -298,8 +298,9 @@ void Studio::start(){
 //        Close action(i);
 //        action.act(*this);
 //    }
-    action = new CloseAll();
+    action=new CloseAll();
     action->inputAction = orders;
     action->act(*this);
+    delete action;
 
 };

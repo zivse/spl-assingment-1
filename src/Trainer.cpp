@@ -96,7 +96,6 @@ int Trainer::getSalary() {
     return salary;
 }
 void Trainer::addCustomer(Customer* customer) {
-    cout<<"customer id in add customer in trainer: "<<customer->getId();
     customersList.push_back(customer);
     capacity--;
 }
@@ -149,12 +148,13 @@ void Trainer::order(const int customer_id, const std::vector<int> workout_ids, c
         cout<<getCustomer(customer_id)->getName()<<" Is Doing "<<workout_options[workout_ids[i]].getName()<<endl;//changed by ziv
         salary += workout_options[workout_ids[i]].getPrice();//add by ziv
     }
-    getCustomer(customer_id)->setIsOrder();
+    //getCustomer(customer_id)->setIsOrder();
 }
 void Trainer::openTrainer(){
     open=true;
 }
 void Trainer::removeOrder(bool reduceSalary, int customerId) { //add by ziv
+
     std::vector<OrderPair> tempOrderList;
     for(int i=0; i<(int)orderList.size(); i++) {
         if (orderList[i].first != customerId) {
@@ -165,15 +165,15 @@ void Trainer::removeOrder(bool reduceSalary, int customerId) { //add by ziv
             }
             // delete &orderList[i];
         }
-        orderList.pop_back();
+        // orderList.pop_back();
     }
+    orderList.clear();
     for (OrderPair order : tempOrderList) {
         orderList.push_back(order);
     }
 }
 void Trainer::closeTrainer() {
     for(Customer *customer: customersList){
-        cout<<"this is so dumb ";
         int cid = customer->getId();
         cout<<cid<<endl;
         removeCustomer(customersList[0]->getId());

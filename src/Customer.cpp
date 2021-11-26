@@ -3,7 +3,7 @@
 #include "Workout.h"
 #include <functional>
 using namespace std;
-Customer::Customer(std::string c_name, int c_id):name(c_name),id(c_id),isOrder(false){
+Customer::Customer(std::string c_name, int c_id):name(c_name),id(c_id){//,isOrder(false){
 }
 Customer::~Customer(){
 
@@ -15,12 +15,12 @@ std::string Customer:: getName() const{
 int Customer:: getId() const{
     return id;
 }
-bool Customer::getIsOrder() const{
-    return isOrder;
-}
-void Customer::setIsOrder() {
-    isOrder = true;
-}
+//bool Customer::getIsOrder() const{
+//    return isOrder;
+//}
+//void Customer::setIsOrder() {
+//    isOrder = true;
+//}
 SweatyCustomer::SweatyCustomer(string _name, int _id):Customer(_name,_id)
 {
 

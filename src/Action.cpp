@@ -120,11 +120,12 @@ void MoveCustomer::act(Studio &studio) {
             error("Cannot move customer");
         } else {
             Customer* customerToMove = srcTrainerObj->getCustomer(id)->clone();
+            //delete srcTrainerObj->getCustomer(id);
             dstTrainerObj->addCustomer(customerToMove);
-            if (customerToMove->getIsOrder()) {
-                srcTrainerObj->removeOrder(true, id);
-                dstTrainerObj->order(id, customerToMove->order(studio.getWorkoutOptions()), studio.getWorkoutOptions());
-            }
+            //  if (customerToMove->getIsOrder()) {
+            srcTrainerObj->removeOrder(true, id);
+            dstTrainerObj->order(id, customerToMove->order(studio.getWorkoutOptions()), studio.getWorkoutOptions());
+            //   }
             srcTrainerObj->removeCustomer(id);
             complete();
             if (srcTrainerObj->getCustomers().empty()) {
@@ -272,6 +273,7 @@ void PrintTrainerStatus::act(Studio &studio){//added by nir
         for(int j=0;j<(int)tempOrdersList.size();j++){
             cout<<tempOrdersList[j].second.getName()<<" "<<tempOrdersList[j].second.getPrice()<<"NIS "<<tempOrdersList[j].first<<endl;
         }
+        cout<<"Current Trainer's Salary: " << tempTrainer->getSalary()<<endl;
     }
     else{
         cout<<"Trainer "<<trainerId<<" status: "<<"closed"<<endl;
