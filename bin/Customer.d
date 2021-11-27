@@ -1,5 +1,8 @@
-bin/Customer.o: src/Customer.cpp include/Customer.h include/Workout.h
+bin/Customer.o: src/Customer.cpp src/../include/Customer.h \
+ src/../include/Workout.h src/../include/Workout.h
 
-include/Customer.h:
+src/../include/Customer.h:
 
-include/Workout.h:
+src/../include/Workout.h:
+
+src/../include/Workout.h:

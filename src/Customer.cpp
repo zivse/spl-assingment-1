@@ -179,7 +179,7 @@ vector<int> FullBodyCustomer:: order(const std::vector<Workout> &workout_options
     }
     isFound = false;
     orderActivities.push_back(highPriceId);
-    for (int i = 0; i < workout_options.size(); i++) {//find the most expansive anaerobic
+    for (int i = 0; i <(int)workout_options.size(); i++) {//find the most expansive anaerobic
         WorkoutType type=workout_options[i].getType();
         int price=workout_options[i].getPrice();
         int workOutId=workout_options[i].getId();

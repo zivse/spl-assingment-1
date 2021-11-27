@@ -1,3 +1,3 @@
-bin/Workout.o: src/Workout.cpp include/Workout.h
+bin/Workout.o: src/Workout.cpp src/../include/Workout.h
 
-include/Workout.h:
+src/../include/Workout.h:

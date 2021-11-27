@@ -11,7 +11,7 @@ Trainer::~Trainer(){
     orderList.clear();
 };
 // Copy Constructor
-Trainer::Trainer(const Trainer & other): capacity(other.capacity), open(other.open), salary(other.salary), customersList(), orderList(){
+Trainer::Trainer(const Trainer & other): capacity(other.capacity), open(other.open), customersList(), orderList(), salary(other.salary){
     for(Customer *customer: other.customersList){
         customersList.push_back(customer->clone());
     }
@@ -20,7 +20,7 @@ Trainer::Trainer(const Trainer & other): capacity(other.capacity), open(other.op
 }
 
 //move constructor
-Trainer::Trainer(Trainer&&other):capacity(other.getCapacity()),open(other.open),salary(other.salary), customersList(), orderList(){
+Trainer::Trainer(Trainer&&other):capacity(other.getCapacity()),open(other.open), customersList(), orderList(),salary(other.salary){
     for(int i=0;i<(int)other.customersList.size();i++){
         customersList.push_back(other.customersList[i]);
     }

@@ -1,8 +1,13 @@
-bin/Trainer.o: src/Trainer.cpp include/Customer.h include/Workout.h \
-  include/Trainer.h
+bin/Trainer.o: src/Trainer.cpp src/../include/Customer.h \
+ src/../include/Workout.h src/../include/Trainer.h \
+ src/../include/../include/Customer.h src/../include/../include/Workout.h
 
-include/Customer.h:
+src/../include/Customer.h:
 
-include/Workout.h:
+src/../include/Workout.h:
 
-include/Trainer.h:
+src/../include/Trainer.h:
+
+src/../include/../include/Customer.h:
+
+src/../include/../include/Workout.h:
