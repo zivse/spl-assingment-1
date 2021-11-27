@@ -9,11 +9,11 @@
 #include "../include/Customer.h"
 using namespace std;
 extern Studio* backup;
-Studio::Studio():open(false),trainers(),actionsLog(),workout_options(),customerId(0){
+Studio::Studio():open(false),trainers(),workout_options(),actionsLog(),customerId(0){
 
 }
 //Copy Constructor
-Studio::Studio(const Studio& other):open(other.open), trainers(), actionsLog(), workout_options(), customerId(other.customerId){// add by ziv
+Studio::Studio(const Studio& other):open(other.open), trainers(), workout_options(), actionsLog(), customerId(other.customerId){// add by ziv
     for(Trainer *trainer: other.trainers){
         trainers.push_back(new Trainer(*trainer));
     }
@@ -25,7 +25,7 @@ Studio::Studio(const Studio& other):open(other.open), trainers(), actionsLog(), 
     }
 }
 //Move Constructor
-Studio::Studio(Studio&& other):open(other.open), trainers(), actionsLog(), workout_options(), customerId(other.customerId){
+Studio::Studio(Studio&& other):open(other.open), trainers(), workout_options(), actionsLog(), customerId(other.customerId){
     for(Trainer *trainer: other.trainers){
         trainers.push_back(trainer);
     }
@@ -110,7 +110,7 @@ Studio::~Studio(){
 const vector<BaseAction*>&Studio::getActionsLog() const{
     return actionsLog;
 }
-Studio::Studio(const std::string &configFilePath):open(true),customerId(0),actionsLog(),workout_options(),trainers() {
+Studio::Studio(const std::string &configFilePath):open(true),trainers(),workout_options(),actionsLog(),customerId(0) {
     std::ifstream myfile(configFilePath);
     int index = 0;
     std::string line;
