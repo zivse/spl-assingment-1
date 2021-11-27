@@ -3,9 +3,9 @@
 
 #include <vector>
 #include <string>
-#include "Workout.h"
-#include "Trainer.h"
-#include "Action.h"
+#include "../include/Workout.h"
+#include "../include/Trainer.h"
+#include "../include/Action.h"
 
 class Studio{
 public:

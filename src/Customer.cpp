@@ -1,26 +1,20 @@
-#include "Customer.h"
+#include "../include/Customer.h"
 #include <algorithm>
-#include "Workout.h"
+#include "../include/Workout.h"
 #include <functional>
 using namespace std;
-Customer::Customer(std::string c_name, int c_id):name(c_name),id(c_id){//,isOrder(false){
+Customer::Customer(std::string c_name, int c_id):name(c_name),id(c_id){
 }
 Customer::~Customer(){
 
 }
-
 std::string Customer:: getName() const{
     return name;
 }
 int Customer:: getId() const{
     return id;
 }
-//bool Customer::getIsOrder() const{
-//    return isOrder;
-//}
-//void Customer::setIsOrder() {
-//    isOrder = true;
-//}
+
 SweatyCustomer::SweatyCustomer(string _name, int _id):Customer(_name,_id)
 {
 
@@ -85,7 +79,6 @@ HeavyMuscleCustomer::HeavyMuscleCustomer(string _name, int _id):Customer(_name,_
 HeavyMuscleCustomer::~HeavyMuscleCustomer(){
 }
 vector<int> HeavyMuscleCustomer:: order(const std::vector<Workout> &workout_options) {
-    //vector<int> orderActivities={};
     std::vector<int> prices={};
     for(Workout workout:workout_options){
         WorkoutType type=workout.getType();
@@ -136,7 +129,7 @@ FullBodyCustomer::~FullBodyCustomer(){
 
 }
 
-vector<int> FullBodyCustomer:: order(const std::vector<Workout> &workout_options) {
+vector<int> FullBodyCustomer:: order(const std::vector<Workout> &workout_options) {//find the 3 workout the customer wants
     vector<int> orderActivities={};
     bool isFound = false;
     int lowCrdPrice=0, lowCrdPriceId=0, highPrice=0, highPriceId=0, lowAnePrice=0, lowAnePriceId=0;
@@ -184,7 +177,7 @@ vector<int> FullBodyCustomer:: order(const std::vector<Workout> &workout_options
         }
 
     }
-    isFound = false; //add by ziv
+    isFound = false;
     orderActivities.push_back(highPriceId);
     for (int i = 0; i < workout_options.size(); i++) {//find the most expansive anaerobic
         WorkoutType type=workout_options[i].getType();

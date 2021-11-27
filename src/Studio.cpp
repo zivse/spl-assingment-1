@@ -1,18 +1,17 @@
 #include <iostream>
-#include "Studio.h"
+#include "../include/Studio.h"
 #include "string"
 #include <fstream>
 #include <vector>
 #include <sstream>
-#include "Workout.h"
-#include "Action.h"
-#include "Customer.h"
+#include "../include/Workout.h"
+#include "../include/Action.h"
+#include "../include/Customer.h"
 using namespace std;
 extern Studio* backup;
 Studio::Studio():open(false),trainers(),actionsLog(),workout_options(),customerId(0){
 
 }
-
 //Copy Constructor
 Studio::Studio(const Studio& other):open(other.open), trainers(), actionsLog(), workout_options(), customerId(other.customerId){// add by ziv
     for(Trainer *trainer: other.trainers){
@@ -36,7 +35,7 @@ Studio::Studio(Studio&& other):open(other.open), trainers(), actionsLog(), worko
     }
     other.actionsLog.clear();
     for(Workout workout: other.workout_options){
-        workout_options.push_back(workout);//check
+        workout_options.push_back(workout);
         other.workout_options.pop_back();
     }
 }
@@ -77,26 +76,22 @@ Studio& Studio::operator=(const Studio &other){
 //Move Assignment
 Studio& Studio::operator=(Studio &&other){
     open = other.open;
-    for(int i=0; i< trainers.size();i++){
+    for(int i=0; i< (int)trainers.size();i++){
         delete trainers[i];
     }
     trainers.clear();
     for(Trainer *trainer: other.trainers){
         trainers.push_back(trainer);
     }
-    //other.trainers.clear();
-
-    for(int i=0; i<actionsLog.size(); i++){
+    for(int i=0; i<(int)actionsLog.size(); i++){
         delete actionsLog[i];
     }
     actionsLog.clear();
     for(BaseAction *action : other.actionsLog){
         actionsLog.push_back(action);
     }
-    //workout_options.clear();
-    for(int i=0; i<other.workout_options.size(); i++){
+    for(int i=0; i<(int)other.workout_options.size(); i++){
         workout_options.push_back(other.workout_options[i]);
-        //other.workout_options.pop_back();
     }
     return *this;
 }
@@ -105,12 +100,11 @@ Studio::~Studio(){
     for(Trainer *trainer: trainers){
         delete trainer;
     }
-    trainers.clear();//check if necessary
+    trainers.clear();
     for(BaseAction *action: actionsLog){
         delete action;
     }
-    actionsLog.clear();//check if necessary
-    //workout_options.clear();
+    actionsLog.clear();
 }
 
 const vector<BaseAction*>&Studio::getActionsLog() const{
@@ -168,7 +162,6 @@ Studio::Studio(const std::string &configFilePath):open(true),customerId(0),actio
                     WorkoutTypeEnum=WorkoutType(2);
                 }
                 workout_options.push_back(Workout(index, workoutName,stoi(workoutPrice), WorkoutTypeEnum));
-                //cout<<workout_options[j].getPrice()<<endl;
                 j++;
                 index++;
             }
@@ -227,7 +220,7 @@ void Studio::start(){
                 } else if (customerType == "mcl") {
                     HeavyMuscleCustomer *newMclCustomer = new HeavyMuscleCustomer(customerName, customerId);
                     customersList.push_back(newMclCustomer);
-                } else if (customerType == "fbd"){       // (customerType == "fbd")
+                } else if (customerType == "fbd"){
                     FullBodyCustomer *newFbdCustomer = new FullBodyCustomer(customerName, customerId);
                     customersList.push_back(newFbdCustomer);
                 }
@@ -240,9 +233,6 @@ void Studio::start(){
             action = new OpenTrainer(trainerId, customersList);
             action->inputAction = orders;
             action->act(*this);
-//            if(action->getStatus()==ERROR){
-//                customerId=tempCustomerId; //if the update didnt work dont count the ids of the fail customers
-//            }
         } else if (command.compare("order") == 0) {
             getline(ss, trainerIdString, ' ');
             action = new Order(stoi(trainerIdString));
@@ -263,12 +253,12 @@ void Studio::start(){
             action->inputAction = orders;
             action->act(*this);
 
-        } else if (command.compare("workout_options") == 0) { //added by nir
+        } else if (command.compare("workout_options") == 0) {
             action = new PrintWorkoutOptions();
             action->inputAction = orders;
             action->act(*this);
-        } else if (command.compare("status") == 0) { //added by nir
-            getline(ss, trainerIdString, ' '); //add by ziv
+        } else if (command.compare("status") == 0) {
+            getline(ss, trainerIdString, ' ');
             action = new PrintTrainerStatus(stoi(trainerIdString));
             action->inputAction = orders;
             action->act(*this);
@@ -291,13 +281,8 @@ void Studio::start(){
             action->act(*this);
         }
         actionsLog.push_back(action);
-//    } while (orders.compare("closeall") != 0);
     }while (open);
 
-//    for(int i=0; i<=trainers.size();i++){
-//        Close action(i);
-//        action.act(*this);
-//    }
     action=new CloseAll();
     action->inputAction = orders;
     action->act(*this);

@@ -16,14 +16,11 @@ public:
     int getId() const;
     virtual ~Customer(); //destructor
     virtual Customer* clone()=0;
-    // bool getIsOrder() const;//by ziv
-    // void setIsOrder();//by ziv
-    bool getIsRemoved() const;
-    void setIsRemoved(bool isRemoved);
+//    bool getIsRemoved() const;
+//    void setIsRemoved(bool isRemoved);
 private:
     const std::string name;
     const int id;
-    // bool isOrder; //by ziv
 };
 
 

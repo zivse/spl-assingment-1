@@ -1,4 +1,4 @@
-#include "Workout.h"
+#include "../include/Workout.h"
 using namespace std;
 Workout::Workout( int _id, string _name,  int _price, WorkoutType _type):
         id(_id), name(_name),price(_price),type(_type)

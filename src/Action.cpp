@@ -1,7 +1,7 @@
-#include "Action.h"
+#include "../include/Action.h"
 #include <iostream>
-#include "Trainer.h"
-#include "Studio.h"
+#include "../include/Trainer.h"
+#include "../include/Studio.h"
 #include <vector>
 
 using namespace std;
@@ -29,9 +29,7 @@ void BaseAction::complete(){
 OpenTrainer::OpenTrainer(int id, std::vector<Customer *> &customersList):trainerId(id),customers(customersList){
 }
 OpenTrainer::~OpenTrainer(){
-//    for(Customer* customer: customers){
-//        delete customer;
-//    }
+
     customers.clear();
 
 }
@@ -42,9 +40,16 @@ void OpenTrainer::act(Studio &studio){
     if(trainerId>numOfTrainers or trainerId<0)
     {
         error("Workout session does not exist or is already open");
+        for(int i=0;i<(int)customers.size();i++){
+            delete customers[i];
+        }
+
     }
     else if (isOpen){
         error("Workout session does not exist or is already open");
+        for(int i=0;i<(int)customers.size();i++){
+            delete customers[i];
+        }
     }
     else{
         studio.getTrainer(trainerId)->openTrainer();
@@ -54,7 +59,7 @@ void OpenTrainer::act(Studio &studio){
     }
     complete();
 };
-std::string OpenTrainer::toString() const{//changes by ziv
+std::string OpenTrainer::toString() const{
     std::string logString = inputAction;
     if(getStatus() == ERROR){
         logString = logString +" Error: " + getErrorMsg();
@@ -88,7 +93,7 @@ void Order::act(Studio &studio){
 std::string Order::toString() const{
     std::string logString = inputAction;
     if(getStatus() == ERROR){
-        logString = logString +" Error: " ;//+ getErrorMsg();
+        logString = logString +" Error: " + getErrorMsg();
     }
     else{
         logString = logString + " Completed";
@@ -120,12 +125,9 @@ void MoveCustomer::act(Studio &studio) {
             error("Cannot move customer");
         } else {
             Customer* customerToMove = srcTrainerObj->getCustomer(id)->clone();
-            //delete srcTrainerObj->getCustomer(id);
             dstTrainerObj->addCustomer(customerToMove);
-            //  if (customerToMove->getIsOrder()) {
             srcTrainerObj->removeOrder(true, id);
             dstTrainerObj->order(id, customerToMove->order(studio.getWorkoutOptions()), studio.getWorkoutOptions());
-            //   }
             srcTrainerObj->removeCustomer(id);
             complete();
             if (srcTrainerObj->getCustomers().empty()) {
@@ -136,10 +138,10 @@ void MoveCustomer::act(Studio &studio) {
 
     }
 }
-std::string MoveCustomer::toString() const { // fix when we know how we want to do actionslog print
+std::string MoveCustomer::toString() const {
     std::string logString = inputAction;
     if (getStatus() == ERROR) {
-        logString = logString + " Error: ";// + getErrorMsg();
+        logString = logString + " Error: " + getErrorMsg();
     } else {
         logString = logString + " Completed";
     }
@@ -156,16 +158,18 @@ Close::Close(int id):trainerId(id)
 Close::~Close(){
 
 }
-void Close::act(Studio &studio) {//check if it works
+void Close::act(Studio &studio) {
     Trainer* trainerToClose = studio.getTrainer(trainerId);
-    cout << "Trainer " << trainerId << " closed." << " Salary " << trainerToClose->getSalary() << "NIS" << endl;
+    if(trainerToClose->isOpen()){
+        cout << "Trainer " << trainerId << " closed." << " Salary " << trainerToClose->getSalary() << "NIS" << endl;
+    }
     trainerToClose->closeTrainer();
     complete();
 }
 std::string Close::toString() const {
     std::string logString = inputAction;
     if (getStatus() == ERROR) {
-        logString = logString + " Error: ";//+ getErrorMsg();
+        logString = logString + " Error: "+ getErrorMsg();
     } else {
         logString = logString + " Completed";
     }
@@ -180,7 +184,7 @@ CloseAll::CloseAll()
 CloseAll::~CloseAll(){
 
 }
-void CloseAll::act(Studio &studio) {//need to be fixed
+void CloseAll::act(Studio &studio) {
     for (int i = 0; i < (int)studio.getTrainers().size(); i++) {
         Close close = Close(i);
         close.act(studio);
@@ -226,12 +230,13 @@ PrintActionsLog *PrintActionsLog::clone(){
     return new PrintActionsLog(*this);
 }
 
-PrintWorkoutOptions::PrintWorkoutOptions(){//added by nir
+PrintWorkoutOptions::PrintWorkoutOptions(){
 }
+
 PrintWorkoutOptions::~PrintWorkoutOptions(){
 
 }
-void PrintWorkoutOptions::act(Studio &studio){ //added by nir
+void PrintWorkoutOptions::act(Studio &studio){
     std::vector<Workout> &tempWorkOutList=studio.getWorkoutOptions();
     string type;
     for(int i=0;i<(int)tempWorkOutList.size();i++){
@@ -239,8 +244,10 @@ void PrintWorkoutOptions::act(Studio &studio){ //added by nir
             type="ANAEROBIC";
         }
         else if(tempWorkOutList[i].getType()==1){
-            type="MIXED";}
-        else{type="CARDIO";
+            type="MIXED";
+        }
+        else{
+            type="CARDIO";
         }
         cout<<tempWorkOutList[i].getName()<<", "<<type<<", "<<tempWorkOutList[i].getPrice()<<endl;
     }
@@ -249,16 +256,16 @@ void PrintWorkoutOptions::act(Studio &studio){ //added by nir
 PrintWorkoutOptions *PrintWorkoutOptions::clone(){
     return new PrintWorkoutOptions(*this);
 }
-std::string PrintWorkoutOptions::toString() const{//added by nir
+std::string PrintWorkoutOptions::toString() const{
     return "";
 }
-PrintTrainerStatus::PrintTrainerStatus(int id):trainerId(id){//added by nir
+PrintTrainerStatus::PrintTrainerStatus(int id):trainerId(id){
 }
 PrintTrainerStatus::~PrintTrainerStatus(){
 
 }
 
-void PrintTrainerStatus::act(Studio &studio){//added by nir
+void PrintTrainerStatus::act(Studio &studio){
     Trainer *tempTrainer = studio.getTrainer(trainerId);
     std::vector<Customer *> tempCustomersList=studio.getTrainer(trainerId)->getCustomers();
     std::vector<OrderPair> tempOrdersList=studio.getTrainer(trainerId)->getOrders();
@@ -322,9 +329,6 @@ void RestoreStudio::act(Studio &studio){
     if(backup == nullptr){
         error("No backup available");
     }
-//    if(backup != nullptr){
-//        delete(backup);
-//    }
     else {
         studio = *backup;
         complete();
