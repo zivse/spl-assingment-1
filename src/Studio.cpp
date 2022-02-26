@@ -114,7 +114,6 @@ Studio::Studio(const std::string &configFilePath):open(true),trainers(),workout_
     std::ifstream myfile(configFilePath);
     int index = 0;
     std::string line;
-    int numOfTrainers;
     int j = 0;
     if(myfile.is_open()){
         int counter = 0;
@@ -126,7 +125,7 @@ Studio::Studio(const std::string &configFilePath):open(true),trainers(),workout_
                 counter = counter+1;
             }
             else if (counter == 1 && line[0]!='#') {
-                numOfTrainers = std::stoi(line);
+                continue;
             }
             else if(counter == 2 && line[0]!='#') {
                 int i = 0;

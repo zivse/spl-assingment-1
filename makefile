@@ -1,25 +1,25 @@
-CXX = g++
-CXXFLAGS = -g -Wall -std=c++11
-CPPFLAGS = -I ./include -MMD -MP
+CC = g++
+
+CFLAGS = -g -Wall -std=c++11
+LFLAGS = -I ./include -MMD -MP
 
 SRCS = $(wildcard ./src/*.cpp)
 OBJS = $(patsubst ./src/%.cpp,./bin/%.o, $(SRCS))
 DEPS := $(patsubst %.o,%.d, $(OBJS))
 
-# default target
+#all targets 
 all: ./bin/studio
 
-# build studio
+# making Studio
 ./bin/studio: $(OBJS)
-	@echo "Building ..."
-	$(CXX) $(OBJS) -o $@
-	@echo "Finished building"
+	$(CC) $(OBJS) -o $@
+
 
 # build cpp files
 ./bin/%.o: ./src/%.cpp
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
+	$(CC) $(LFLAGS) $(CFLAGS) -c $< -o $@
 
-# clean build files
+# clean files 
 clean:
 	@rm -f ./bin/*
 
